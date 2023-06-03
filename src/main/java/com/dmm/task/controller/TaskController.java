@@ -1,15 +1,9 @@
 package com.dmm.task.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 
-import com.dmm.task.data.entity.Tasks;
 import com.dmm.task.data.repository.TasksRepository;
-import com.dmm.task.form.PostsForm;
 
 
 public class TaskController {
@@ -26,19 +20,10 @@ public class TaskController {
 	 * @return 遷移先
 	 */
 
-	@PostMapping("/main")
-	public String posts(Model model) {
-
-		// 逆順で投稿をすべて取得する
-		List<Tasks> list = repo.findAll(Sort.by(Sort.Direction.DESC, "id"));
-
-//    Collections.reverse(list); //普通に取得してこちらの処理でもOK
-		model.addAttribute("tasks", list);
-		PostsForm postForm = new PostsForm();
-		model.addAttribute("postForm", postForm);
-		return "/main";
-	}
-
+	    @GetMapping("/main")
+	    public String main() {
+	        return "main";
+	    }
 
 
 
