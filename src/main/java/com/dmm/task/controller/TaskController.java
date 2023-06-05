@@ -2,15 +2,26 @@ package com.dmm.task.controller;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
+import com.dmm.task.data.entity.Tasks;
 import com.dmm.task.data.repository.TasksRepository;
+import com.dmm.task.form.TasksForm;
+import com.dmm.task.service.AccountUserDetails;
 
 @Controller
 public class TaskController {
@@ -35,7 +46,7 @@ public class TaskController {
 
 		// 3. その月の1日のLocalDateを取得する
 		//別パターン
-//		LocalDate d = LocalDate.now().withDayOfMonth(1);
+		//		LocalDate d = LocalDate.now().withDayOfMonth(1);
 
 		LocalDate day;
 		day = LocalDate.now();
@@ -56,29 +67,90 @@ public class TaskController {
 		}
 
 		month.add(week);
-		week = new ArrayList<>();    // 次週分のリストを用意
+		week = new ArrayList<>(); // 次週分のリストを用意
 
 		// 6. 2週目以降は単純に1日ずつ日を増やしながらLocalDateを求めてListへ格納していき、
 		//土曜日になったら1．のリストへ格納して新しいListを生成する
 		//（月末を求めるにはLocalDate#lengthOfMonth()を使う）
 
-		for(int i = 7; i <= day.lengthOfMonth(); i++) {
+		for (int i = 7; i <= day.lengthOfMonth(); i++) {
 			for (int j = 1; j <= 7; j++) {
 				day = day.plusDays(1);
 				week.add(day);
 			}
 
 			month.add(week);
-			week = new ArrayList<>();    // 次週分のリストを用意
+			week = new ArrayList<>(); // 次週分のリストを用意
 
 		}
-
 
 		model.addAttribute("matrix", month);
 
 		return "main";
 	}
 
+	/**
+	 * タスクの一覧表示.
+	 *
+	 * @param model モデル
+	 * @return 遷移先
+	 */
+	@GetMapping("/tasks")
+	public String tasks(Model model) {
+
+		// カレンダーの日付（LocalDate）とタスク情報（Tasks）とをセットでもつためのMultiValueMap
+		MultiValueMap<LocalDate, Tasks> tasks = new LinkedMultiValueMap<LocalDate, Tasks>();
+
+		// ひとまず空で渡す
+		model.addAttribute("tasks", tasks);
+
+		return "main";
+	}
+
+
+
+	/**
+	   * タスクの新規作成画面の表示
+	   */
+	  @GetMapping("/main/create/{date}")
+	  public String create(Model model, LocalDateTime date) {
+				date = LocalDateTime.now();
+				model.addAttribute("date", date);
+				return "create";
+	  }
+
+
+
+
+	/**
+	 * タスクを作成.
+	 *
+	 * @param taskForm 送信データ
+	 * @param user     ユーザー情報
+	 * @return 遷移先
+	 */
+	@PostMapping("/tasks/create")
+	public String create(@Validated TasksForm taskForm, BindingResult bindingResult,
+			@AuthenticationPrincipal AccountUserDetails user, Model model) {
+		// バリデーションの結果、エラーがあるかどうかチェック
+		if (bindingResult.hasErrors()) {
+			// エラーがある場合は投稿登録画面を返す
+			List<Tasks> list = repo.findAll(Sort.by(Sort.Direction.DESC, "id"));
+			model.addAttribute("tasks", list);
+			model.addAttribute("taskForm", taskForm);
+			return "/edit";
+		}
+
+		Tasks task = new Tasks();
+		task.setName(user.getName());
+		task.setTitle(taskForm.getTitle());
+		task.setText(taskForm.getText());
+		task.setDate(LocalDateTime.now());
+
+		repo.save(task);
+
+		return "redirect:/main";
+	}
 
 
 }
