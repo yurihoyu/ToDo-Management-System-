@@ -56,6 +56,7 @@ public class TaskController {
 		// 4-1. 1日の曜日を表すDayOfWeekを取得
 		DayOfWeek w = day.getDayOfWeek();
 
+
 		// 4-2. 上で取得した1日のLocalDateにその曜日の値（DayOfWeek#getValue 1～7)をマイナスして前月分のLocalDateを求める
 		//1日の週の月曜日のLocalDateがわかる
 		day = day.minusDays(w.getValue());
@@ -86,20 +87,9 @@ public class TaskController {
 
 		model.addAttribute("matrix", month);
 
-		return "main";
-	}
-
-	/**
-	 * タスクの一覧表示.
-	 *
-	 * @param model モデル
-	 * @return 遷移先
-	 */
-	@GetMapping("/tasks")
-	public String tasks(Model model) {
-
 		// カレンダーの日付（LocalDate）とタスク情報（Tasks）とをセットでもつためのMultiValueMap
 		MultiValueMap<LocalDate, Tasks> tasks = new LinkedMultiValueMap<LocalDate, Tasks>();
+
 
 		// ひとまず空で渡す
 		model.addAttribute("tasks", tasks);
@@ -112,15 +102,12 @@ public class TaskController {
 	/**
 	   * タスクの新規作成画面の表示
 	   */
-	  @GetMapping("/main/create/{date}")
-	  public String create(Model model, LocalDateTime date) {
-				date = LocalDateTime.now();
-				model.addAttribute("date", date);
-				return "create";
-	  }
-
-
-
+	@GetMapping("/main/create/{date}")
+	public String create(Model model, LocalDateTime date) {
+//		date = LocalDateTime.now();
+//		model.addAttribute("date", date);
+		return "create";
+	}
 
 	/**
 	 * タスクを作成.
@@ -151,6 +138,5 @@ public class TaskController {
 
 		return "redirect:/main";
 	}
-
 
 }
