@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -37,7 +38,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		// 認可の設定
 		http.exceptionHandling().accessDeniedPage("/accessDeniedPage").and().authorizeRequests()
-		.antMatchers("/css/todo.css").permitAll() // css/todo.cssは、全ユーザからのアクセスを許可
+//		.antMatchers("/css/todo.css").permitAll() // css/todo.cssは、全ユーザからのアクセスを許可
 				.antMatchers("/loginForm").permitAll() // loginは、全ユーザからのアクセスを許可
 
 				.anyRequest().authenticated(); // login以外は、認証を求める
@@ -54,6 +55,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// ログアウト設定
 		http.logout().logoutSuccessUrl("/loginForm") // ログアウト成功時に遷移するパス
 				.permitAll(); // 全ユーザに対して許可
+	}
+
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		// 画像、JavaScript、cssは認可の対象外とする
+		web.debug(false).ignoring().antMatchers("/images/**", "/js/**", "/css/**");
 	}
 
 }
