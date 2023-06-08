@@ -13,8 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -121,7 +119,7 @@ public class TaskController {
 	 * @return 遷移先
 	 */
 	@PostMapping("/main/create")
-	public String create(@Validated TasksForm taskForm, BindingResult bindingResult,
+	public String create(TasksForm taskForm,
 			@AuthenticationPrincipal AccountUserDetails user, Model model) {
 
 
