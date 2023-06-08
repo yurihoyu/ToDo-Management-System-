@@ -30,6 +30,8 @@ public class TaskController {
 	@Autowired
 	private TasksRepository repo;
 
+
+
 	/**
 	 * カレンダーの表示.
 	 *
