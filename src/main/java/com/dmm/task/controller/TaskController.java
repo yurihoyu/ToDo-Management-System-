@@ -126,6 +126,7 @@ public class TaskController {
 		task.setTitle(taskForm.getTitle());
 		task.setText(taskForm.getText());
 		task.setDate(LocalDateTime.now());
+		task.setDone(false);
 
 		// 取得したリストをテンプレートに渡す
 		model.addAttribute("task", task);
