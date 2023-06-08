@@ -124,7 +124,6 @@ public class TaskController {
 	public String create(TasksForm taskForm,
 			@AuthenticationPrincipal AccountUserDetails user, Model model) {
 
-
 		Tasks task = new Tasks();
 		task.setName(user.getName());
 		task.setTitle(taskForm.getTitle());
