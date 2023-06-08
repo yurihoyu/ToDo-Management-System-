@@ -136,7 +136,6 @@ public class TaskController {
 		model.addAttribute("task", task);
 
 
-
 		// データベースに保存
 		repo.save(task);
 
