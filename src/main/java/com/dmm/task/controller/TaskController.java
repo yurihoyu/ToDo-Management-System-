@@ -131,9 +131,10 @@ public class TaskController {
 		task.setText(taskForm.getText());
 		task.setDate(LocalDateTime.now());
 
-		System.out.println("==================================================");
-		System.out.println(task);
-		System.out.println("==================================================");
+
+		// 取得したリストをテンプレートに渡す
+		model.addAttribute("task", task);
+
 
 
 		// データベースに保存
