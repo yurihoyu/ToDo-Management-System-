@@ -26,11 +26,8 @@ import com.dmm.task.service.AccountUserDetails;
 public class TaskController {
 	// @Autowiredアノテーションを付けると、Spring Bootが自動でインスタンスをInjectします。
 
-
 	@Autowired
 	private TasksRepository repo;
-
-
 
 	/**
 	 * カレンダーの表示.
@@ -130,14 +127,11 @@ public class TaskController {
 		task.setText(taskForm.getText());
 		task.setDate(LocalDateTime.now());
 
-
 		// 取得したリストをテンプレートに渡す
 		model.addAttribute("task", task);
 
-
 		// データベースに保存
 		repo.save(task);
-
 
 		return "redirect:/main";
 	}
