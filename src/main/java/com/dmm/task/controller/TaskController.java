@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -95,6 +96,20 @@ public class TaskController {
 		// カレンダーの日付（LocalDate）とタスク情報（Tasks）とをセットでもつためのMultiValueMap
 		MultiValueMap<LocalDate, Tasks> tasks = new LinkedMultiValueMap<LocalDate, Tasks>();
 
+
+		 List<Tasks> list =  repo.findAll(Sort.by(Sort.Direction.DESC, "id"));
+
+		 for (int i = 0; i < list.size(); i++) {
+			 LocalDateTime dt1 = list.get(i).getDate();
+			 tasks.add(dt1, list.get(i));
+
+			}
+
+
+
+
+
+
 		// ひとまず空で渡す
 		model.addAttribute("tasks", tasks);
 
@@ -128,11 +143,12 @@ public class TaskController {
 		task.setDate(LocalDateTime.now());
 		task.setDone(false);
 
-		// 取得したリストをテンプレートに渡す
-		model.addAttribute("task", task);
+
 
 		// データベースに保存
 		repo.save(task);
+
+
 
 		return "redirect:/main";
 	}
