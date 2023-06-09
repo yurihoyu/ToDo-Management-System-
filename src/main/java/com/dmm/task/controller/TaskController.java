@@ -3,11 +3,11 @@ package com.dmm.task.controller;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -96,24 +96,15 @@ public class TaskController {
 		// カレンダーの日付（LocalDate）とタスク情報（Tasks）とをセットでもつためのMultiValueMap
 		MultiValueMap<LocalDate, Tasks> tasks = new LinkedMultiValueMap<LocalDate, Tasks>();
 
-		 List<Tasks> list =  repo.findAll(Sort.by(Sort.Direction.DESC, "id"));
+		//始めの日付と終わりの日付を引数に入れる
+		List<Tasks> list = repo.findAllByDateBetween(LocalDateTime.from(day),
+				LocalDateTime.from(day.with(TemporalAdjusters.lastDayOfMonth())));
 
-//		 そのままではtasksに代入できない
-//		tasks.add(LocalDateTime.now().list);
+		for (Tasks t : list) {
+			tasks.add(t.getDate().toLocalDate(), t);
+		}
 
-
-		//ループで回すか
-		 for (int i = 0; i < list.size(); i++) {
-			 LocalDateTime dt1 = list.get(i).getDate();
-			 tasks.add(dt1, list.get(i));
-
-			}
-
-
-
-
-
-		// ひとまず空で渡す
+		// tasks渡す
 		model.addAttribute("tasks", tasks);
 
 		return "main";
@@ -146,12 +137,8 @@ public class TaskController {
 		task.setDate(LocalDateTime.now());
 		task.setDone(false);
 
-
-
 		// データベースに保存
 		repo.save(task);
-
-
 
 		return "redirect:/main";
 	}
