@@ -96,15 +96,18 @@ public class TaskController {
 		// カレンダーの日付（LocalDate）とタスク情報（Tasks）とをセットでもつためのMultiValueMap
 		MultiValueMap<LocalDate, Tasks> tasks = new LinkedMultiValueMap<LocalDate, Tasks>();
 
-
 		 List<Tasks> list =  repo.findAll(Sort.by(Sort.Direction.DESC, "id"));
 
+//		 そのままではtasksに代入できない
+//		tasks.add(LocalDateTime.now().list);
+
+
+		//ループで回すか
 		 for (int i = 0; i < list.size(); i++) {
 			 LocalDateTime dt1 = list.get(i).getDate();
 			 tasks.add(dt1, list.get(i));
 
 			}
-
 
 
 
